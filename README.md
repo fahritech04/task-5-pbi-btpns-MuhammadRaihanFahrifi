@@ -27,10 +27,10 @@ Untuk menjalankan proyek ini secara lokal, pastikan Anda telah menginstall GoLan
    ```bash
    # 1. Buka terminal
 
-   # 2. Pastikan Anda berada dalam direktori proyek
+   # 2. Pastikan berada dalam direktori proyek
 
    # 3. Jalankan aplikasi dengan perintah berikut:
    go run main.go
    ```
 
-Aplikasi akan berjalan di http://localhost:PORT (sesuaikan dengan konfigurasi Anda)
+Aplikasi berjalan di http://localhost:PORT (sesuaikan dengan konfigurasi Anda)
