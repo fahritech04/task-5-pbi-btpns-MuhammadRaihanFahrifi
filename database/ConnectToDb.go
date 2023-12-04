@@ -17,10 +17,10 @@ func ConnectToDb() {
 
 	if dbError != nil {
 		log.Fatal(dbError)
-		panic("failed to connect database")
+		panic("Koneksi Database Gagal, Coba Lagi!!")
 	}
 
-	log.Println("success to connection to database")
+	log.Println("Koneksi Database Berhasil")
 
 	DB = database
 }

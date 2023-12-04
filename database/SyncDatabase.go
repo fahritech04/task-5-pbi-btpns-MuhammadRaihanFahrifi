@@ -7,5 +7,5 @@ import (
 
 func SyncDatabase() {
 	DB.AutoMigrate(&models.User{}, &models.Photo{})
-	log.Println("database migration completed")
+	log.Println("Migrasi Database Berhasil")
 }

@@ -21,7 +21,7 @@ func GetPhotoList(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	// menampilkan foto berdasarkan user_id dan diurutkan berdasarkan created_at  db.Preload("UserResult").
+
 	if err := database.DB.Table("photos").Select("photos.id, photos.title, photos.caption, photos.photo_url, photos.created_at, photos.updated_at, users.email").Joins("JOIN users ON users.id = photos.user_id").Where("photos.user_id = ?", claims.ID).Order("photos.created_at desc").Scan(&photos).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -59,20 +59,17 @@ func CreatePhoto(c *gin.Context) {
 		return
 	}
 
-	// validasi data pengguna
 	if _, err := govalidator.ValidateStruct(photoCreate); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	desiredExtensions := []string{"jpg", "jpeg", "png", "gif"}
 
-	// periksa apakah URL foto valid dan berakhir dengan salah satu ekstensi yang diinginkan
 	if !helpers.IsValidURLWithDesiredExtension(photoCreate.PhotoUrl, desiredExtensions) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid photo URL or doesn't end with the desired extension"})
 		return
 	}
 
-	// ambil user_id dari token
 	tokenString := c.GetHeader("Authorization")
 	claims, err := helpers.ParseToken(tokenString)
 	if err != nil {
@@ -81,7 +78,6 @@ func CreatePhoto(c *gin.Context) {
 		return
 	}
 
-	// buat objek photo baru
 	photo := models.Photo{
 		Title:    photoCreate.Title,
 		Caption:  photoCreate.Caption,
@@ -89,7 +85,6 @@ func CreatePhoto(c *gin.Context) {
 		UserID:   claims.ID,
 	}
 
-	// simpan objek photo ke database
 	if err := database.DB.Create(&photo).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -110,7 +105,6 @@ func UpdatePhoto(c *gin.Context) {
 		return
 	}
 
-	// validasi data pengguna menggunakan govalidator
 	if _, err := govalidator.ValidateStruct(photoUpdate); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -118,13 +112,11 @@ func UpdatePhoto(c *gin.Context) {
 
 	desiredExtensions := []string{"jpg", "jpeg", "png", "gif"}
 
-	// periksa apakah URL foto valid dan berakhir dengan salah satu ekstensi yang diinginkan
 	if !helpers.IsValidURLWithDesiredExtension(photoUpdate.PhotoUrl, desiredExtensions) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid photo URL or doesn't end with the desired extension"})
 		return
 	}
 
-	// ambil user_id dari token
 	tokenString := c.GetHeader("Authorization")
 	claims, err := helpers.ParseToken(tokenString)
 	if err != nil {
@@ -133,7 +125,6 @@ func UpdatePhoto(c *gin.Context) {
 		return
 	}
 
-	// Ambil data photo dari database
 	var photo models.Photo
 
 	if err := database.DB.Where("id = ? AND user_id = ?", photoID, claims.ID).First(&photo).Error; err != nil {
@@ -161,7 +152,6 @@ func DeletePhoto(c *gin.Context) {
 		return
 	}
 
-	// Ambil user_id dari token
 	tokenString := c.GetHeader("Authorization")
 	claims, err := helpers.ParseToken(tokenString)
 	if err != nil {
